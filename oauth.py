@@ -1,38 +1,3 @@
-CLIENT_SECRET = "ta-secret.9P$Kom%mzW_1kpvx"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 from flask import Flask, redirect, request, send_from_directory
 import secrets, requests, urllib.parse, time, os
 # from state import STATE
@@ -40,7 +5,7 @@ import secrets, requests, urllib.parse, time, os
 
 app = Flask(__name__)
 
-CLIENT_ID = "d978888a-fd0d-45c9-8cc2-c2c0b26065d7"
+CLIENT_ID = os.getenv("CLIENT_ID")
 
 REDIRECT_URI = "https://836e-24-47-48-37.ngrok-free.app/auth/callback"
 SCOPES = "openid offline_access vehicle_device_data vehicle_cmds vehicle_charging_cmds"
