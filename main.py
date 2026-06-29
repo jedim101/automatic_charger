@@ -2,12 +2,14 @@ from flask import Flask, redirect, request, send_from_directory
 import secrets, requests, urllib.parse, time, os
 # from state import STATE
 
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 
 CLIENT_ID = os.getenv("CLIENT_ID")
 
-REDIRECT_URI = "https://836e-24-47-48-37.ngrok-free.app/auth/callback"
+REDIRECT_URI = "https://api.matthewglasser.org/auth/callback"
 SCOPES = "openid offline_access vehicle_device_data vehicle_cmds vehicle_charging_cmds"
 
 
@@ -67,7 +69,7 @@ class TeslaAPI:
     def get_vehicle_data(self, vid):
         return self.api_get(f"/api/1/vehicles/{vid}/vehicle_data")
 
-tesla_api = TeslaAPI(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, SCOPES)
+tesla_api = TeslaAPI(CLIENT_ID, os.getenv("CLIENT_SECRET"), REDIRECT_URI, SCOPES)
 
 @app.route("/")
 def index():
@@ -104,7 +106,7 @@ def callback():
     resp = requests.post("https://fleet-auth.prd.vn.cloud.tesla.com/oauth2/v3/token", data={
         "grant_type": "authorization_code",
         "client_id": CLIENT_ID,
-        "client_secret": CLIENT_SECRET,
+        "client_secret": os.getenv("CLIENT_SECRET"),
         "code": code,
         "redirect_uri": REDIRECT_URI
     })
@@ -185,4 +187,5 @@ def vehicle(vid):
 def well_known(filename):
     return send_from_directory('.well-known/appspecific', filename)
 
-app.run(port=8080, debug=False)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080, debug=False)

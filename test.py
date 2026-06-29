@@ -1,23 +1,12 @@
-CLIENT_SECRET = "ta-secret.9P$Kom%mzW_1kpvx"
-
-
-
-
-
-
-
-
-
-
-
-
-
 import requests, urllib.parse, time, os
 # from state import STATE
 
-CLIENT_ID = "d978888a-fd0d-45c9-8cc2-c2c0b26065d7"
+from dotenv import load_dotenv
+load_dotenv()
 
-REDIRECT_URI = "https://836e-24-47-48-37.ngrok-free.app/auth/callback"
+CLIENT_ID = os.getenv("CLIENT_ID")
+
+REDIRECT_URI = "https://api.matthewglasser.org/auth/callback"
 SCOPES = "openid offline_access vehicle_device_data vehicle_cmds vehicle_charging_cmds"
 
 class TeslaAPI:
@@ -76,7 +65,7 @@ class TeslaAPI:
   def get_vehicle_data(self, vid):
     return self.api_get(f"/api/1/vehicles/{vid}/vehicle_data")
 
-tesla_api = TeslaAPI(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, SCOPES)
+tesla_api = TeslaAPI(CLIENT_ID, os.getenv("CLIENT_SECRET"), REDIRECT_URI, SCOPES)
 
 if not tesla_api.tokens:
   url = "https://fleet-auth.prd.vn.cloud.tesla.com/oauth2/v3/authorize?" + urllib.parse.urlencode({
