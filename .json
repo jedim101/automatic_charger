@@ -1,0 +1,114 @@
+[
+  {
+    "response": {
+      "fleet_telemetry_errors": [
+        {
+          "created_at": "2026-07-01T02:45:24.933271759Z",
+          "error": "\"webconnection error: tls: failed to verify certificate: x509: certificate signed by unknown authority\" cm_type=stream",
+          "error_name": "cloud_manager_error",
+          "hostname": "api.matthewglasser.org",
+          "name": "d978888a-fd0d-45c9-8cc2-c2c0b26065d7",
+          "port": "443",
+          "txID": "676e3d47-63e1-42fb-866b-10e1a836fe65",
+          "vin": "7SAYGDED6TF615582"
+        },
+        {
+          "created_at": "2026-07-01T02:45:40.86280621Z",
+          "error": "\"webconnection error: tls: failed to verify certificate: x509: certificate signed by unknown authority\" cm_type=stream",
+          "error_name": "cloud_manager_error",
+          "hostname": "api.matthewglasser.org",
+          "name": "d978888a-fd0d-45c9-8cc2-c2c0b26065d7",
+          "port": "443",
+          "txID": "676e3d47-63e1-42fb-866b-10e1a836fe65",
+          "vin": "7SAYGDED6TF615582"
+        },
+        {
+          "created_at": "2026-07-01T02:45:58.932381628Z",
+          "error": "\"webconnection error: tls: failed to verify certificate: x509: certificate signed by unknown authority\" cm_type=stream",
+          "error_name": "cloud_manager_error",
+          "hostname": "api.matthewglasser.org",
+          "name": "d978888a-fd0d-45c9-8cc2-c2c0b26065d7",
+          "port": "443",
+          "txID": "676e3d47-63e1-42fb-866b-10e1a836fe65",
+          "vin": "7SAYGDED6TF615582"
+        },
+        {
+          "created_at": "2026-07-01T02:46:26.014792306Z",
+          "error": "\"webconnection error: tls: failed to verify certificate: x509: certificate signed by unknown authority\" cm_type=stream",
+          "error_name": "cloud_manager_error",
+          "hostname": "api.matthewglasser.org",
+          "name": "d978888a-fd0d-45c9-8cc2-c2c0b26065d7",
+          "port": "443",
+          "txID": "676e3d47-63e1-42fb-866b-10e1a836fe65",
+          "vin": "7SAYGDED6TF615582"
+        },
+        {
+          "created_at": "2026-07-01T02:46:40.841271103Z",
+          "error": "\"webconnection error: tls: failed to verify certificate: x509: certificate signed by unknown authority\" cm_type=stream",
+          "error_name": "cloud_manager_error",
+          "hostname": "api.matthewglasser.org",
+          "name": "d978888a-fd0d-45c9-8cc2-c2c0b26065d7",
+          "port": "443",
+          "txID": "676e3d47-63e1-42fb-866b-10e1a836fe65",
+          "vin": "7SAYGDED6TF615582"
+        }
+      ]
+    }
+  },
+  {
+    "response": {
+      "fleet_telemetry_errors": [
+        {
+          "created_at": "2026-07-01T02:50:34.927477444Z",
+          "error": "\"webconnection error: tls: failed to verify certificate: x509: certificate signed by unknown authority\" cm_type=stream",
+          "error_name": "cloud_manager_error",
+          "hostname": "api.matthewglasser.org",
+          "name": "d978888a-fd0d-45c9-8cc2-c2c0b26065d7",
+          "port": "443",
+          "txID": "5b6a4fd7-2780-4b11-8275-35d97ee8c91f",
+          "vin": "7SAYGDED6TF615582"
+        },
+        {
+          "created_at": "2026-07-01T02:50:40.955456934Z",
+          "error": "\"webconnection error: tls: failed to verify certificate: x509: certificate signed by unknown authority\" cm_type=stream",
+          "error_name": "cloud_manager_error",
+          "hostname": "api.matthewglasser.org",
+          "name": "d978888a-fd0d-45c9-8cc2-c2c0b26065d7",
+          "port": "443",
+          "txID": "5b6a4fd7-2780-4b11-8275-35d97ee8c91f",
+          "vin": "7SAYGDED6TF615582"
+        },
+        {
+          "created_at": "2026-07-01T02:51:01.007579167Z",
+          "error": "\"webconnection error: tls: failed to verify certificate: x509: certificate signed by unknown authority\" cm_type=stream",
+          "error_name": "cloud_manager_error",
+          "hostname": "api.matthewglasser.org",
+          "name": "d978888a-fd0d-45c9-8cc2-c2c0b26065d7",
+          "port": "443",
+          "txID": "5b6a4fd7-2780-4b11-8275-35d97ee8c91f",
+          "vin": "7SAYGDED6TF615582"
+        },
+        {
+          "created_at": "2026-07-01T02:51:15.879903309Z",
+          "error": "\"webconnection error, url: wss://api.matthewglasser.org:443, response body: error code: 502, status code: 502 Bad Gateway, err: websocket: bad handshake\" cm_type=stream",
+          "error_name": "cloud_manager_error",
+          "hostname": "api.matthewglasser.org",
+          "name": "d978888a-fd0d-45c9-8cc2-c2c0b26065d7",
+          "port": "443",
+          "txID": "5b6a4fd7-2780-4b11-8275-35d97ee8c91f",
+          "vin": "7SAYGDED6TF615582"
+        },
+        {
+          "created_at": "2026-07-01T02:51:18.152249447Z",
+          "error": "\"webconnection error, url: wss://api.matthewglasser.org:443, response body: error code: 502, status code: 502 Bad Gateway, err: websocket: bad handshake\" cm_type=stream",
+          "error_name": "cloud_manager_error",
+          "hostname": "api.matthewglasser.org",
+          "name": "d978888a-fd0d-45c9-8cc2-c2c0b26065d7",
+          "port": "443",
+          "txID": "5b6a4fd7-2780-4b11-8275-35d97ee8c91f",
+          "vin": "7SAYGDED6TF615582"
+        }
+      ]
+    }
+  }
+]

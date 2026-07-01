@@ -1,3 +1,8 @@
 .env.local
 .env
 private-key.pem
+tls-cert.pem
+fleet_ca.key
+server.crt
+server.csr
+server.key

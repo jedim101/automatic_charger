@@ -1,11 +1,15 @@
 from flask import Flask, redirect, request, send_from_directory
 import secrets, requests, urllib.parse, time, os
-# from state import STATE
+from fastapi import FastAPI, WebSocket
+from flask_sock import Sock
+
+import struct
 
 from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+sock = Sock(app)
 
 CLIENT_ID = os.getenv("CLIENT_ID")
 
@@ -187,5 +191,37 @@ def vehicle(vid):
 def well_known(filename):
     return send_from_directory('.well-known/appspecific', filename)
 
+from telemetry_decode import decode_telemetry_message
+
+@sock.route("/")
+def telemetry(ws):
+    while True:
+        data = ws.receive()
+        if data is None:
+            break
+
+        try:
+            message = decode_telemetry_message(data)
+        except Exception as exc:
+            print(f"telemetry decode error: {exc}")
+            continue
+
+        if message.get("kind") == "ack":
+            print(f"telemetry ack: topic={message['topic']} txid={message['txid']}")
+            continue
+
+        fields = message.get("fields", {})
+        print(fields)
+
+@app.route("/", methods=["POST"])
+def telemetry_root():
+    print(request.json)
+    return "", 200
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080, debug=False)
+  app.run(
+    host="0.0.0.0",
+    port=8080,
+    # ssl_context=("server.crt", "server.key")
+  )
+
