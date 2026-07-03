@@ -11,7 +11,11 @@ const char* password = "REDACTED";
 AsyncWebServer server(80);
 AsyncWebSocket ws("/");
 
-// #define LED_PIN 2
+const int STEP_PIN = 4;
+const int DIR_PIN  = 5;
+const int EN_PIN   = 6;
+
+const int STEP_DELAY_US = 500;
 
 void onChargePortOpen() {
     digitalWrite(LED_BUILTIN, HIGH);
@@ -196,6 +200,14 @@ void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, LOW);
 
+    pinMode(STEP_PIN, OUTPUT);
+    pinMode(DIR_PIN, OUTPUT);
+    pinMode(EN_PIN, OUTPUT);
+    digitalWrite(EN_PIN, LOW);     // Enable driver
+    digitalWrite(DIR_PIN, HIGH);   // Initial direction
+
+
+
     WiFi.begin(ssid, password);
     Serial.print("Connecting");
 
@@ -216,4 +228,26 @@ void setup() {
     Serial.println("WebSocket server ready at /");
 }
 
-void loop() {}
+void loop() {
+    // One revolution (200 full steps)
+
+  for (int i = 0; i < 3200; i++) {
+
+    digitalWrite(STEP_PIN, HIGH);
+
+    delayMicroseconds(STEP_DELAY_US);
+
+    digitalWrite(STEP_PIN, LOW);
+
+    delayMicroseconds(STEP_DELAY_US);
+
+  }
+
+  delay(1000);
+
+  // Reverse direction
+
+  digitalWrite(DIR_PIN, !digitalRead(DIR_PIN));
+
+  delay(500);
+}
