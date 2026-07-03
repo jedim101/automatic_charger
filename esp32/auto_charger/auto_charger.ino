@@ -11,6 +11,16 @@ const char* password = "REDACTED";
 AsyncWebServer server(80);
 AsyncWebSocket ws("/");
 
+// #define LED_PIN 2
+
+void onChargePortOpen() {
+    digitalWrite(LED_BUILTIN, HIGH);
+}
+
+void onChargePortClose() {
+    digitalWrite(LED_BUILTIN, LOW);
+}
+
 static uint16_t fbVtableOffset(const uint8_t *buf, uint32_t table) {
     int32_t rel;
     memcpy(&rel, buf + table, 4);
@@ -143,6 +153,11 @@ extern "C" bool decodeDatumCallback(pb_istream_t *stream, const pb_field_t *fiel
 
         Serial.print("Charge port open: ");
         Serial.println(open ? "YES" : "NO");
+        if (open) {
+            onChargePortOpen();
+        } else {
+            onChargePortClose();
+        }
     }
 
     return true;
@@ -175,8 +190,11 @@ void onWsEvent(
 }
 }
 
+
 void setup() {
     Serial.begin(115200);
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, LOW);
 
     WiFi.begin(ssid, password);
     Serial.print("Connecting");
