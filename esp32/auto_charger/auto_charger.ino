@@ -17,12 +17,40 @@ const int EN_PIN   = 6;
 
 const int STEP_DELAY_US = 500;
 
+const int EXTEND_STEPS = 800;
+
+
+void extend() {
+    digitalWrite(DIR_PIN, HIGH);
+    for (int i = 0; i < EXTEND_STEPS; i++) {
+        digitalWrite(STEP_PIN, HIGH);
+        delayMicroseconds(STEP_DELAY_US);
+        digitalWrite(STEP_PIN, LOW);
+        delayMicroseconds(STEP_DELAY_US);
+    }
+}
+
+void retract() {
+    digitalWrite(DIR_PIN, LOW);
+    for (int i = 0; i < EXTEND_STEPS; i++) {
+        digitalWrite(STEP_PIN, HIGH);
+        delayMicroseconds(STEP_DELAY_US);
+        digitalWrite(STEP_PIN, LOW);
+        delayMicroseconds(STEP_DELAY_US);
+    }
+}
+
+
 void onChargePortOpen() {
     digitalWrite(LED_BUILTIN, HIGH);
+    Serial.println("Extending");
+    extend();
 }
 
 void onChargePortClose() {
     digitalWrite(LED_BUILTIN, LOW);
+    Serial.println("Retracting");
+    retract();
 }
 
 static uint16_t fbVtableOffset(const uint8_t *buf, uint32_t table) {
@@ -229,25 +257,25 @@ void setup() {
 }
 
 void loop() {
-    // One revolution (200 full steps)
+    // One revolution (3200 full steps)
 
-  for (int i = 0; i < 3200; i++) {
+  // for (int i = 0; i < 3200; i++) {
 
-    digitalWrite(STEP_PIN, HIGH);
+  //   digitalWrite(STEP_PIN, HIGH);
 
-    delayMicroseconds(STEP_DELAY_US);
+  //   delayMicroseconds(STEP_DELAY_US);
 
-    digitalWrite(STEP_PIN, LOW);
+  //   digitalWrite(STEP_PIN, LOW);
 
-    delayMicroseconds(STEP_DELAY_US);
+  //   delayMicroseconds(STEP_DELAY_US);
 
-  }
+  // }
 
-  delay(1000);
+  // delay(1000);
 
-  // Reverse direction
+  // // Reverse direction
 
-  digitalWrite(DIR_PIN, !digitalRead(DIR_PIN));
+  // digitalWrite(DIR_PIN, !digitalRead(DIR_PIN));
 
-  delay(500);
+  // delay(500);
 }
