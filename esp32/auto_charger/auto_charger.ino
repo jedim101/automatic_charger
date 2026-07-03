@@ -4,12 +4,14 @@
 #include "pb.h"
 #include "pb_decode.h"
 #include "vehicle_min.pb.h"
-
-const char* ssid = "CrazyTown";
-const char* password = "REDACTED";
+#include "secrets.h"
 
 AsyncWebServer server(80);
 AsyncWebSocket ws("/");
+
+IPAddress local_IP(192, 168, 7, 70);
+IPAddress gateway(192, 168, 7, 1);
+IPAddress subnet(255, 255, 255, 0);
 
 const int STEP_PIN = 4;
 const int DIR_PIN  = 5;
@@ -234,9 +236,11 @@ void setup() {
     digitalWrite(EN_PIN, LOW);     // Enable driver
     digitalWrite(DIR_PIN, HIGH);   // Initial direction
 
+    if (!WiFi.config(local_IP, gateway, subnet)) {
+        Serial.println("STA Failed to configure");
+    }
 
-
-    WiFi.begin(ssid, password);
+    WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
     Serial.print("Connecting");
 
     while (WiFi.status() != WL_CONNECTED) {

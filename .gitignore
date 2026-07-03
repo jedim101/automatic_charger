@@ -6,3 +6,4 @@ fleet_ca.key
 server.crt
 server.csr
 server.key
+esp32/auto_charger/secrets.h
