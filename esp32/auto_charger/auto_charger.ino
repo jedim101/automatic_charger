@@ -5,6 +5,7 @@
 #include "pb_decode.h"
 #include "vehicle_min.pb.h"
 #include "secrets.h"
+#include <AccelStepper.h>
 
 AsyncWebServer server(80);
 AsyncWebSocket ws("/");
@@ -19,39 +20,43 @@ const int EN_PIN   = 6;
 
 const int STEP_DELAY_US = 500;
 
-const int EXTEND_STEPS = 800;
+AccelStepper stepper(AccelStepper::DRIVER, STEP_PIN, DIR_PIN);
 
+const int BUTTON_PIN = 10;
+
+
+const int RETRACTED = 0;
+const int EXTENDED = 1600;
+
+enum class MotorStatus {
+    Extended,
+    Retracted,
+    Extending,
+    Retracting
+};
+
+MotorStatus motorStatus = MotorStatus::Extended;
 
 void extend() {
-    digitalWrite(DIR_PIN, HIGH);
-    for (int i = 0; i < EXTEND_STEPS; i++) {
-        digitalWrite(STEP_PIN, HIGH);
-        delayMicroseconds(STEP_DELAY_US);
-        digitalWrite(STEP_PIN, LOW);
-        delayMicroseconds(STEP_DELAY_US);
-    }
+    motorStatus = MotorStatus::Extending;
+    stepper.moveTo(EXTENDED);
+    Serial.println("Extending");
 }
 
 void retract() {
-    digitalWrite(DIR_PIN, LOW);
-    for (int i = 0; i < EXTEND_STEPS; i++) {
-        digitalWrite(STEP_PIN, HIGH);
-        delayMicroseconds(STEP_DELAY_US);
-        digitalWrite(STEP_PIN, LOW);
-        delayMicroseconds(STEP_DELAY_US);
-    }
+    motorStatus = MotorStatus::Retracting;
+    stepper.moveTo(RETRACTED);
+    Serial.println("Retracting");
 }
 
 
 void onChargePortOpen() {
     digitalWrite(LED_BUILTIN, HIGH);
-    Serial.println("Extending");
     extend();
 }
 
 void onChargePortClose() {
     digitalWrite(LED_BUILTIN, LOW);
-    Serial.println("Retracting");
     retract();
 }
 
@@ -230,11 +235,12 @@ void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, LOW);
 
-    pinMode(STEP_PIN, OUTPUT);
-    pinMode(DIR_PIN, OUTPUT);
+    stepper.setMaxSpeed(2000);
+    stepper.setAcceleration(1000);
+    stepper.setCurrentPosition(RETRACTED);
+
     pinMode(EN_PIN, OUTPUT);
-    digitalWrite(EN_PIN, LOW);     // Enable driver
-    digitalWrite(DIR_PIN, HIGH);   // Initial direction
+    digitalWrite(EN_PIN, LOW);
 
     if (!WiFi.config(local_IP, gateway, subnet)) {
         Serial.println("STA Failed to configure");
@@ -260,26 +266,29 @@ void setup() {
     Serial.println("WebSocket server ready at /");
 }
 
+bool goingToB = true;
+
 void loop() {
-    // One revolution (3200 full steps)
+    if (digitalRead(BUTTON_PIN) == HIGH) {
+      if (motorStatus == MotorStatus::Extended) {
+        retract();
+      } else if (motorStatus == MotorStatus::Retracted) {
+        extend();
+      }
+    }
+    Serial.print("Position: ");
+    Serial.print(stepper.currentPosition());
+    Serial.print(" Button: ");
+    Serial.print(digitalRead(BUTTON_PIN) ? "HIGH" : "LOW");
+    Serial.print(" Motor Status: ");
+    Serial.println(motorStatus == MotorStatus::Extended ? "Extended" : motorStatus == MotorStatus::Retracted ? "Retracted" : motorStatus == MotorStatus::Extending ? "Extending" : "Retracting");
 
-  // for (int i = 0; i < 3200; i++) {
+    stepper.run();
 
-  //   digitalWrite(STEP_PIN, HIGH);
-
-  //   delayMicroseconds(STEP_DELAY_US);
-
-  //   digitalWrite(STEP_PIN, LOW);
-
-  //   delayMicroseconds(STEP_DELAY_US);
-
-  // }
-
-  // delay(1000);
-
-  // // Reverse direction
-
-  // digitalWrite(DIR_PIN, !digitalRead(DIR_PIN));
-
-  // delay(500);
+    if (stepper.currentPosition() == EXTENDED) {
+        motorStatus = MotorStatus::Extended;
+    }
+    if (stepper.currentPosition() == RETRACTED) {
+      motorStatus = MotorStatus::Retracted;
+    }
 }
