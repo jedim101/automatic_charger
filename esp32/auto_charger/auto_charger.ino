@@ -32,7 +32,9 @@ enum class MotorStatus {
     Extended,
     Retracted,
     Extending,
-    Retracting
+    Retracting,
+    PausedRetracting,
+    PausedExtending
 };
 
 MotorStatus motorStatus = MotorStatus::Extended;
@@ -40,13 +42,11 @@ MotorStatus motorStatus = MotorStatus::Extended;
 void extend() {
     motorStatus = MotorStatus::Extending;
     stepper.moveTo(EXTENDED);
-    Serial.println("Extending");
 }
 
 void retract() {
     motorStatus = MotorStatus::Retracting;
     stepper.moveTo(RETRACTED);
-    Serial.println("Retracting");
 }
 
 
@@ -266,22 +266,40 @@ void setup() {
     Serial.println("WebSocket server ready at /");
 }
 
-bool goingToB = true;
+bool buttonPressed = false;
 
 void loop() {
-    if (digitalRead(BUTTON_PIN) == HIGH) {
-      if (motorStatus == MotorStatus::Extended) {
+    if (digitalRead(BUTTON_PIN) == HIGH && !buttonPressed) {
+      Serial.println("Button pressed");
+      buttonPressed = true;
+      if (motorStatus == MotorStatus::Extended || motorStatus == MotorStatus::PausedExtending) {
         retract();
-      } else if (motorStatus == MotorStatus::Retracted) {
+      } else if (motorStatus == MotorStatus::Retracted || motorStatus == MotorStatus::PausedRetracting) {
         extend();
+      } else {
+        stepper.setSpeed(0);
+        stepper.moveTo(stepper.currentPosition());
+        if (motorStatus == MotorStatus::Extending) {
+          motorStatus = MotorStatus::PausedExtending;
+        } else {
+          motorStatus = MotorStatus::PausedRetracting;
+        }
       }
+      delay(100);
+    }
+    if (digitalRead(BUTTON_PIN) == LOW && buttonPressed) {
+      Serial.println("Button released");
+      buttonPressed = false;
+      delay(100);
     }
     Serial.print("Position: ");
     Serial.print(stepper.currentPosition());
     Serial.print(" Button: ");
     Serial.print(digitalRead(BUTTON_PIN) ? "HIGH" : "LOW");
+    Serial.print(" Button Pressed: ");
+    Serial.print(buttonPressed ? "YES" : "NO");
     Serial.print(" Motor Status: ");
-    Serial.println(motorStatus == MotorStatus::Extended ? "Extended" : motorStatus == MotorStatus::Retracted ? "Retracted" : motorStatus == MotorStatus::Extending ? "Extending" : "Retracting");
+    Serial.println(motorStatus == MotorStatus::Extended ? "Extended" : motorStatus == MotorStatus::Retracted ? "Retracted" : motorStatus == MotorStatus::Extending ? "Extending" : motorStatus == MotorStatus::PausedExtending ? "PausedExtending" : motorStatus == MotorStatus::PausedRetracting ? "PausedRetracting" : "Retracting");
 
     stepper.run();
 
