@@ -26,7 +26,7 @@ const int BUTTON_PIN = 10;
 
 
 const int RETRACTED = 0;
-const int EXTENDED = 1600;
+const int EXTENDED = 16000;
 
 enum class MotorStatus {
     Extended,
@@ -235,8 +235,8 @@ void setup() {
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, LOW);
 
-    stepper.setMaxSpeed(2000);
-    stepper.setAcceleration(1000);
+    stepper.setMaxSpeed(10000);
+    stepper.setAcceleration(4000);
     stepper.setCurrentPosition(RETRACTED);
 
     pinMode(EN_PIN, OUTPUT);
@@ -270,22 +270,31 @@ bool buttonPressed = false;
 
 void loop() {
     if (digitalRead(BUTTON_PIN) == HIGH && !buttonPressed) {
-      Serial.println("Button pressed");
       buttonPressed = true;
-      if (motorStatus == MotorStatus::Extended || motorStatus == MotorStatus::PausedExtending) {
-        retract();
-      } else if (motorStatus == MotorStatus::Retracted || motorStatus == MotorStatus::PausedRetracting) {
-        extend();
-      } else {
-        stepper.setSpeed(0);
-        stepper.moveTo(stepper.currentPosition());
-        if (motorStatus == MotorStatus::Extending) {
-          motorStatus = MotorStatus::PausedExtending;
-        } else {
-          motorStatus = MotorStatus::PausedRetracting;
+      for (int i = 0; i < 10; i++) {
+        if (digitalRead(BUTTON_PIN) == LOW) {
+          buttonPressed = false;
+          break;
         }
+        delay(10);
       }
-      delay(100);
+      if (buttonPressed) {
+        Serial.println("Button pressed");
+        if (motorStatus == MotorStatus::Extended || motorStatus == MotorStatus::PausedExtending) {
+          retract();
+        } else if (motorStatus == MotorStatus::Retracted || motorStatus == MotorStatus::PausedRetracting) {
+          extend();
+        } else {
+          stepper.setSpeed(0);
+          stepper.moveTo(stepper.currentPosition());
+          if (motorStatus == MotorStatus::Extending) {
+            motorStatus = MotorStatus::PausedExtending;
+          } else {
+            motorStatus = MotorStatus::PausedRetracting;
+          }
+        }
+        delay(100);
+      }
     }
     if (digitalRead(BUTTON_PIN) == LOW && buttonPressed) {
       Serial.println("Button released");
