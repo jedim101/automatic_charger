@@ -25,8 +25,8 @@ AccelStepper stepper(AccelStepper::DRIVER, STEP_PIN, DIR_PIN);
 const int BUTTON_PIN = 10;
 
 
-const int RETRACTED = 0;
-const int EXTENDED = 16000;
+const int RETRACTED = 24000;
+const int EXTENDED = 0;
 
 enum class MotorStatus {
     Extended,
@@ -41,22 +41,22 @@ MotorStatus motorStatus = MotorStatus::Extended;
 
 void extend() {
     motorStatus = MotorStatus::Extending;
+    // digitalWrite(LED_BUILTIN, HIGH);
     stepper.moveTo(EXTENDED);
 }
 
 void retract() {
     motorStatus = MotorStatus::Retracting;
+    // digitalWrite(LED_BUILTIN, LOW);
     stepper.moveTo(RETRACTED);
 }
 
 
 void onChargePortOpen() {
-    digitalWrite(LED_BUILTIN, HIGH);
     extend();
 }
 
 void onChargePortClose() {
-    digitalWrite(LED_BUILTIN, LOW);
     retract();
 }
 
@@ -233,11 +233,11 @@ void onWsEvent(
 void setup() {
     Serial.begin(115200);
     pinMode(LED_BUILTIN, OUTPUT);
-    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(LED_BUILTIN, HIGH);
 
-    stepper.setMaxSpeed(10000);
-    stepper.setAcceleration(4000);
-    stepper.setCurrentPosition(RETRACTED);
+    stepper.setMaxSpeed(2000);
+    stepper.setAcceleration(500);
+    stepper.setCurrentPosition(EXTENDED);
 
     pinMode(EN_PIN, OUTPUT);
     digitalWrite(EN_PIN, LOW);
@@ -284,7 +284,8 @@ void loop() {
           retract();
         } else if (motorStatus == MotorStatus::Retracted || motorStatus == MotorStatus::PausedRetracting) {
           extend();
-        } else {
+        }
+        else {
           stepper.setSpeed(0);
           stepper.moveTo(stepper.currentPosition());
           if (motorStatus == MotorStatus::Extending) {
@@ -308,7 +309,9 @@ void loop() {
     Serial.print(" Button Pressed: ");
     Serial.print(buttonPressed ? "YES" : "NO");
     Serial.print(" Motor Status: ");
-    Serial.println(motorStatus == MotorStatus::Extended ? "Extended" : motorStatus == MotorStatus::Retracted ? "Retracted" : motorStatus == MotorStatus::Extending ? "Extending" : motorStatus == MotorStatus::PausedExtending ? "PausedExtending" : motorStatus == MotorStatus::PausedRetracting ? "PausedRetracting" : "Retracting");
+    Serial.print(motorStatus == MotorStatus::Extended ? "Extended" : motorStatus == MotorStatus::Retracted ? "Retracted" : motorStatus == MotorStatus::Extending ? "Extending" : motorStatus == MotorStatus::PausedExtending ? "PausedExtending" : motorStatus == MotorStatus::PausedRetracting ? "PausedRetracting" : "Retracting");
+    Serial.print(" Motor Pos: ");
+    Serial.println(stepper.currentPosition());
 
     stepper.run();
 
@@ -317,5 +320,13 @@ void loop() {
     }
     if (stepper.currentPosition() == RETRACTED) {
       motorStatus = MotorStatus::Retracted;
+    }
+
+    if (motorStatus == MotorStatus::Extended) {
+        stepper.moveTo(EXTENDED);
+    }
+
+    if (motorStatus == MotorStatus::Retracted) {
+        stepper.moveTo(RETRACTED);
     }
 }
